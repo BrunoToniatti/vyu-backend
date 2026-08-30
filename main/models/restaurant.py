@@ -1,6 +1,7 @@
 from django.db import models
 from main.models.base import TimeStampedModel
 from main.models.user_manager import UserManager
+from main.models.category import CategoryItem
 
 
 class Restaurant(TimeStampedModel):
@@ -21,6 +22,12 @@ class Restaurant(TimeStampedModel):
     site = models.URLField(max_length=255, null=True, blank=True, verbose_name="Site Oficial")
     instagram = models.CharField(max_length=100, null=True, blank=True, verbose_name="Perfil do Instagram")
     path_logo = models.CharField(max_length=255, null=True, blank=True, verbose_name="Caminho do Logo")
+    category_items = models.ManyToManyField(
+        CategoryItem,
+        blank=True,
+        related_name='restaurants',
+        verbose_name="Categorias do Restaurante"
+    )
 
     class Meta:
         db_table = 'restaurant'

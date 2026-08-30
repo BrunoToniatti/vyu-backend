@@ -1,4 +1,5 @@
 from django.urls import path, include
+from main.views.category_views import UserPreferencesView, RestaurantCategoryItemsView
 
 urlpatterns = [
     # AUTH
@@ -18,4 +19,13 @@ urlpatterns = [
 
     # BUG REPORTS
     path('reports/', include('main.urls.bug_report_urls')),
+
+    # CATEGORIES
+    path('categories/', include('main.urls.category_urls')),
+
+    # USER PREFERENCES
+    path('users/me/preferences/', UserPreferencesView.as_view()),
+
+    # RESTAURANT CATEGORIES
+    path('restaurants/<int:restaurant_pk>/categories/', RestaurantCategoryItemsView.as_view()),
 ]

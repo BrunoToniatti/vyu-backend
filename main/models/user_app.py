@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 from main.models.base import TimeStampedModel
+from main.models.category import CategoryItem
 
 
 class UserApp(TimeStampedModel):
@@ -17,6 +18,12 @@ class UserApp(TimeStampedModel):
     email = models.EmailField(unique=True, max_length=255, db_index=True, verbose_name="E-mail")
     username = models.CharField(unique=True, max_length=100, db_index=True, verbose_name="Nome de Usuário")
     is_active = models.BooleanField(default=True, verbose_name="Ativo")
+    preferences = models.ManyToManyField(
+        CategoryItem,
+        blank=True,
+        related_name='users',
+        verbose_name="Preferências"
+    )
 
     class Meta:
         db_table = 'user_app'
