@@ -101,3 +101,32 @@ class UserManagerUpdateSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Número de telefone inválido.")
             return value.strip()
         return value
+
+
+class AdminUserManagerCreateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True, min_length=8)
+    is_admin = serializers.BooleanField(default=False)
+
+    class Meta:
+        model = UserManager
+        fields = ('first_name', 'last_name', 'phone_number', 'email', 'username', 'password', 'is_admin')
+
+    def validate_email(self, value):
+        value = value.strip().lower()
+        if UserManager.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Este e-mail já está em uso.")
+        return value
+
+    def validate_username(self, value):
+        value = value.strip().lower()
+        if not re.match(r'^[a-zA-Z0-9_.-]+$', value):
+            raise serializers.ValidationError("Nome de usuário inválido.")
+        if UserManager.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Este nome de usuário já está em uso.")
+        return value
+
+
+class AdminUserManagerUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserManager
+        fields = ('first_name', 'last_name', 'phone_number', 'is_admin', 'is_active')
