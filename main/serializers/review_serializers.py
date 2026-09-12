@@ -16,12 +16,17 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
 class ReviewResponseSerializer(serializers.ModelSerializer):
     user_name = serializers.SerializerMethodField()
     user_photo_url = serializers.SerializerMethodField()
+    user_id = serializers.SerializerMethodField()
+    user_email = serializers.SerializerMethodField()
+    user_phone = serializers.SerializerMethodField()
+    user_preferences = serializers.SerializerMethodField()
 
     class Meta:
         model = Review
         fields = (
-            'id', 'user_name', 'user_photo_url', 'stars', 'comment',
-            'manager_response', 'created_at',
+            'id', 'user_id', 'user_name', 'user_photo_url',
+            'user_email', 'user_phone', 'user_preferences',
+            'stars', 'comment', 'manager_response', 'created_at',
         )
         read_only_fields = fields
 
@@ -30,6 +35,21 @@ class ReviewResponseSerializer(serializers.ModelSerializer):
 
     def get_user_photo_url(self, obj):
         return obj.user_app.photo_url or None
+
+    def get_user_id(self, obj):
+        return obj.user_app.id
+
+    def get_user_email(self, obj):
+        return obj.user_app.email
+
+    def get_user_phone(self, obj):
+        return obj.user_app.phone_number
+
+    def get_user_preferences(self, obj):
+        return [
+            {'id': item.id, 'name': item.name, 'category': item.category.name if hasattr(item, 'category') else ''}
+            for item in obj.user_app.preferences.select_related('category').all()
+        ]
 
 
 class ManagerResponseSerializer(serializers.Serializer):
