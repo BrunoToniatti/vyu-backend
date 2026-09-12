@@ -143,6 +143,8 @@ class RestaurantPublicResponseSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'address',
+            'latitude',
+            'longitude',
             'contact_phone',
             'site',
             'instagram',
