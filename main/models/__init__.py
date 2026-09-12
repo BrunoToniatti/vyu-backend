@@ -6,6 +6,7 @@ from main.models.restaurant import Restaurant
 from main.models.queue import Queue
 from main.models.bug_report import BugReport
 from main.models.review import Review
+from main.models.chat_message import ChatMessage
 
 __all__ = [
     'TimeStampedModel',
@@ -17,4 +18,5 @@ __all__ = [
     'Queue',
     'BugReport',
     'Review',
+    'ChatMessage',
 ]

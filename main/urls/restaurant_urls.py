@@ -12,6 +12,7 @@ from main.views.review_views import (
     ManagerReviewResponseView,
 )
 from main.views.photo_views import RestaurantPhotoUploadView
+from main.views.chat_views import PublicChatListView, AppUserChatView, ManagerChatView
 
 urlpatterns = [
     # Public routes
@@ -27,4 +28,8 @@ urlpatterns = [
     path('', ManagerRestaurantListCreateView.as_view(), name='restaurant-list-create'),
     path('<int:pk>/', ManagerRestaurantDetailView.as_view(), name='restaurant-detail'),
     path('<int:pk>/photo/', RestaurantPhotoUploadView.as_view(), name='restaurant-photo-upload'),
+    # Chat routes
+    path('public/<int:pk>/chat/', PublicChatListView.as_view(), name='restaurant-chat-list'),
+    path('public/<int:pk>/chat/send/', AppUserChatView.as_view(), name='restaurant-chat-send'),
+    path('<int:pk>/chat/', ManagerChatView.as_view(), name='restaurant-manager-chat'),
 ]
