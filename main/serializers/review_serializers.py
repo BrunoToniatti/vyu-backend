@@ -15,17 +15,21 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
 
 class ReviewResponseSerializer(serializers.ModelSerializer):
     user_name = serializers.SerializerMethodField()
+    user_photo_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Review
         fields = (
-            'id', 'user_name', 'stars', 'comment',
+            'id', 'user_name', 'user_photo_url', 'stars', 'comment',
             'manager_response', 'created_at',
         )
         read_only_fields = fields
 
     def get_user_name(self, obj):
         return f"{obj.user_app.first_name} {obj.user_app.last_name}"
+
+    def get_user_photo_url(self, obj):
+        return obj.user_app.photo_url or None
 
 
 class ManagerResponseSerializer(serializers.Serializer):
