@@ -22,6 +22,7 @@ class RestaurantCreateSerializer(serializers.ModelSerializer):
             'site',
             'instagram',
             'path_logo',
+            'photo_url',
             'created_at',
             'updated_at',
         )
@@ -67,6 +68,7 @@ class RestaurantUpdateSerializer(serializers.ModelSerializer):
             'site',
             'instagram',
             'path_logo',
+            'photo_url',
         )
 
     def validate_name(self, value):
@@ -117,6 +119,7 @@ class RestaurantAdminResponseSerializer(serializers.ModelSerializer):
             'site',
             'instagram',
             'path_logo',
+            'photo_url',
             'created_at',
             'updated_at',
         )
@@ -151,6 +154,7 @@ class RestaurantPublicResponseSerializer(serializers.ModelSerializer):
             'site',
             'instagram',
             'path_logo',
+            'photo_url',
             'category_items',
             'average_rating',
             'review_count',

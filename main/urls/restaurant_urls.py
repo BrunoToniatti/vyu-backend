@@ -11,6 +11,7 @@ from main.views.review_views import (
     RestaurantReviewListCreateView,
     ManagerReviewResponseView,
 )
+from main.views.photo_views import RestaurantPhotoUploadView
 
 urlpatterns = [
     # Public routes
@@ -25,4 +26,5 @@ urlpatterns = [
     # Protected manager routes
     path('', ManagerRestaurantListCreateView.as_view(), name='restaurant-list-create'),
     path('<int:pk>/', ManagerRestaurantDetailView.as_view(), name='restaurant-detail'),
+    path('<int:pk>/photo/', RestaurantPhotoUploadView.as_view(), name='restaurant-photo-upload'),
 ]
