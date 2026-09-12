@@ -129,6 +129,8 @@ class RestaurantPublicResponseSerializer(serializers.ModelSerializer):
     Public serializer for Mobile App consumers and anonymous visitors.
     CRITICAL: Never exposes manager_id, manager credentials, or administrative details.
     """
+    category_items = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
         model = Restaurant
         fields = (
@@ -139,5 +141,6 @@ class RestaurantPublicResponseSerializer(serializers.ModelSerializer):
             'site',
             'instagram',
             'path_logo',
+            'category_items',
         )
         read_only_fields = fields
