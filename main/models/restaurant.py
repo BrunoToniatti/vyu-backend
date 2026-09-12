@@ -22,6 +22,8 @@ class Restaurant(TimeStampedModel):
     site = models.URLField(max_length=255, null=True, blank=True, verbose_name="Site Oficial")
     instagram = models.CharField(max_length=100, null=True, blank=True, verbose_name="Perfil do Instagram")
     path_logo = models.CharField(max_length=255, null=True, blank=True, verbose_name="Caminho do Logo")
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name="Latitude")
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name="Longitude")
     category_items = models.ManyToManyField(
         CategoryItem,
         blank=True,
