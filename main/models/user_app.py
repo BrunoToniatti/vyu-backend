@@ -13,6 +13,7 @@ class UserApp(TimeStampedModel):
     last_name = models.CharField(max_length=100, verbose_name="Sobrenome")
     phone_number = models.CharField(max_length=20, verbose_name="Número de Telefone")
     path_photo = models.CharField(max_length=255, null=True, blank=True, verbose_name="Caminho da Foto")
+    photo_url = models.URLField(max_length=500, null=True, blank=True, verbose_name="URL da Foto (Cloudinary)")
     password = models.CharField(max_length=255, verbose_name="Senha Hash")
     last_login = models.DateTimeField(null=True, blank=True, verbose_name="Último Login")
     email = models.EmailField(unique=True, max_length=255, db_index=True, verbose_name="E-mail")

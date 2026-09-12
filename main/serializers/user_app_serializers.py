@@ -66,6 +66,7 @@ class UserAppResponseSerializer(serializers.ModelSerializer):
             'last_name',
             'phone_number',
             'path_photo',
+            'photo_url',
             'email',
             'username',
             'last_login',
