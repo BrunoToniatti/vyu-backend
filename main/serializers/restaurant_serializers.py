@@ -136,6 +136,8 @@ class RestaurantPublicResponseSerializer(serializers.ModelSerializer):
     CRITICAL: Never exposes manager_id, manager credentials, or administrative details.
     """
     category_items = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    average_rating = serializers.SerializerMethodField()
+    review_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Restaurant
@@ -150,5 +152,16 @@ class RestaurantPublicResponseSerializer(serializers.ModelSerializer):
             'instagram',
             'path_logo',
             'category_items',
+            'average_rating',
+            'review_count',
         )
         read_only_fields = fields
+
+    def get_average_rating(self, obj):
+        reviews = obj.reviews.all()
+        if not reviews:
+            return None
+        return round(sum(r.stars for r in reviews) / len(reviews), 1)
+
+    def get_review_count(self, obj):
+        return obj.reviews.count()

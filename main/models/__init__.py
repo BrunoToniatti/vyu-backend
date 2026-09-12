@@ -5,6 +5,7 @@ from main.models.user_app import UserApp
 from main.models.restaurant import Restaurant
 from main.models.queue import Queue
 from main.models.bug_report import BugReport
+from main.models.review import Review
 
 __all__ = [
     'TimeStampedModel',
@@ -15,4 +16,5 @@ __all__ = [
     'Restaurant',
     'Queue',
     'BugReport',
+    'Review',
 ]
