@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 from main.permissions import IsManager, IsRestaurantOwner, IsAppUser
 from main.models.restaurant import Restaurant
@@ -62,10 +63,48 @@ class MyReservationsView(APIView):
                 'notes': r.notes,
                 'status': r.status,
                 'status_display': r.get_status_display(),
+                'checked_in_at': r.checked_in_at,
             }
             for r in qs
         ]
         return Response({'status': 'success', 'data': data})
+
+
+class ReservationCheckInView(APIView):
+    """POST /reservations/<pk>/checkin/ — app user checks in for their reservation"""
+    permission_classes = [IsAppUser]
+
+    def post(self, request, pk):
+        user: UserApp = request.user
+        reservation = get_object_or_404(Reservation, pk=pk, user_app=user)
+
+        if reservation.status != Reservation.STATUS_CONFIRMED:
+            return Response(
+                {'status': 'error', 'message': 'Check-in só é permitido para reservas confirmadas.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        today = timezone.localdate()
+        if reservation.date != today:
+            return Response(
+                {'status': 'error', 'message': 'Check-in só pode ser feito no dia da reserva.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        reservation.status = Reservation.STATUS_CHECKED_IN
+        reservation.checked_in_at = timezone.now()
+        reservation.save(update_fields=['status', 'checked_in_at'])
+
+        return Response({
+            'status': 'success',
+            'message': 'Check-in realizado com sucesso!',
+            'data': {
+                'id': reservation.id,
+                'status': reservation.status,
+                'status_display': reservation.get_status_display(),
+                'checked_in_at': reservation.checked_in_at,
+            },
+        })
 
 
 class PublicReservationCreateView(APIView):

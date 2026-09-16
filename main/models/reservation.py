@@ -3,16 +3,18 @@ from main.models.base import TimeStampedModel
 
 
 class Reservation(TimeStampedModel):
-    STATUS_PENDING   = 'PENDING'
-    STATUS_CONFIRMED = 'CONFIRMED'
-    STATUS_CANCELLED = 'CANCELLED'
-    STATUS_COMPLETED = 'COMPLETED'
+    STATUS_PENDING    = 'PENDING'
+    STATUS_CONFIRMED  = 'CONFIRMED'
+    STATUS_CHECKED_IN = 'CHECKED_IN'
+    STATUS_CANCELLED  = 'CANCELLED'
+    STATUS_COMPLETED  = 'COMPLETED'
 
     STATUS_CHOICES = [
-        (STATUS_PENDING,   'Pendente'),
-        (STATUS_CONFIRMED, 'Confirmada'),
-        (STATUS_CANCELLED, 'Cancelada'),
-        (STATUS_COMPLETED, 'Concluída'),
+        (STATUS_PENDING,    'Pendente'),
+        (STATUS_CONFIRMED,  'Confirmada'),
+        (STATUS_CHECKED_IN, 'Check-in realizado'),
+        (STATUS_CANCELLED,  'Cancelada'),
+        (STATUS_COMPLETED,  'Concluída'),
     ]
 
     restaurant = models.ForeignKey(
@@ -36,6 +38,7 @@ class Reservation(TimeStampedModel):
     time       = models.TimeField(verbose_name='Hora da Reserva')
     party_size = models.PositiveIntegerField(default=1, verbose_name='Número de Pessoas')
     notes      = models.TextField(blank=True, verbose_name='Observações')
+    checked_in_at = models.DateTimeField(null=True, blank=True, verbose_name='Check-in em')
 
     status = models.CharField(
         max_length=20,
