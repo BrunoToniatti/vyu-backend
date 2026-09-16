@@ -17,6 +17,9 @@ urlpatterns = [
     # QUEUE
     path('queues/', include('main.urls.queue_urls')),
 
+    # RESERVATIONS
+    path('reservations/', include('main.urls.reservation_urls')),
+
     # BUG REPORTS
     path('reports/', include('main.urls.bug_report_urls')),
 

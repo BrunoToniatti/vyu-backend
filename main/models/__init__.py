@@ -7,6 +7,7 @@ from main.models.queue import Queue
 from main.models.bug_report import BugReport
 from main.models.review import Review
 from main.models.chat_message import ChatMessage
+from main.models.reservation import Reservation
 
 __all__ = [
     'TimeStampedModel',
@@ -19,4 +20,5 @@ __all__ = [
     'BugReport',
     'Review',
     'ChatMessage',
+    'Reservation',
 ]
