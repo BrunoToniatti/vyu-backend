@@ -40,6 +40,34 @@ class UserPhoneSearchView(APIView):
         })
 
 
+class MyReservationsView(APIView):
+    """GET /reservations/mine/ — all reservations for the authenticated app user"""
+    permission_classes = [IsAppUser]
+
+    def get(self, request):
+        user: UserApp = request.user
+        qs = (
+            Reservation.objects.filter(user_app=user)
+            .select_related('restaurant')
+            .order_by('-date', '-time')
+        )
+        data = [
+            {
+                'id': r.id,
+                'restaurant_id': r.restaurant.id,
+                'restaurant_name': r.restaurant.name,
+                'date': str(r.date),
+                'time': str(r.time)[:5],
+                'party_size': r.party_size,
+                'notes': r.notes,
+                'status': r.status,
+                'status_display': r.get_status_display(),
+            }
+            for r in qs
+        ]
+        return Response({'status': 'success', 'data': data})
+
+
 class PublicReservationCreateView(APIView):
     """POST /restaurants/public/<pk>/reservations/ — app user creates a reservation for themselves"""
     permission_classes = [IsAppUser]
