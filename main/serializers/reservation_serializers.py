@@ -43,3 +43,23 @@ class ReservationStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
         fields = ('status',)
+
+
+class PublicReservationCreateSerializer(serializers.ModelSerializer):
+    """Used by app users — only date, time, party_size, notes; guest info comes from the user profile."""
+    class Meta:
+        model = Reservation
+        fields = ('date', 'time', 'party_size', 'notes')
+
+
+class AppUserReservationSerializer(serializers.ModelSerializer):
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+
+    class Meta:
+        model = Reservation
+        fields = (
+            'id', 'restaurant', 'guest_name', 'guest_phone', 'guest_email',
+            'date', 'time', 'party_size', 'notes', 'status', 'status_display',
+            'created_at',
+        )
+        read_only_fields = fields

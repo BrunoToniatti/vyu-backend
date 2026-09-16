@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 
-from main.permissions import IsManager, IsRestaurantOwner
+from main.permissions import IsManager, IsRestaurantOwner, IsAppUser
 from main.models.restaurant import Restaurant
 from main.models.reservation import Reservation
 from main.models.user_app import UserApp
@@ -11,6 +11,8 @@ from main.serializers.reservation_serializers import (
     ReservationSerializer,
     ReservationCreateSerializer,
     ReservationStatusSerializer,
+    PublicReservationCreateSerializer,
+    AppUserReservationSerializer,
 )
 
 
@@ -35,6 +37,40 @@ class UserPhoneSearchView(APIView):
                 'email': user.email,
                 'phone': user.phone_number,
             },
+        })
+
+
+class PublicReservationCreateView(APIView):
+    """POST /restaurants/public/<pk>/reservations/ — app user creates a reservation for themselves"""
+    permission_classes = [IsAppUser]
+
+    def post(self, request, pk):
+        restaurant = get_object_or_404(Restaurant, pk=pk)
+        serializer = PublicReservationCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user: UserApp = request.user
+        reservation = Reservation.objects.create(
+            restaurant=restaurant,
+            user_app=user,
+            guest_name=f"{user.first_name} {user.last_name}".strip() or user.username,
+            guest_phone=user.phone_number or '',
+            guest_email=user.email or '',
+            **serializer.validated_data,
+        )
+        return Response(
+            {'status': 'success', 'status_code': 201, 'data': AppUserReservationSerializer(reservation).data},
+            status=status.HTTP_201_CREATED,
+        )
+
+    def get(self, request, pk):
+        """GET own reservations for this restaurant"""
+        restaurant = get_object_or_404(Restaurant, pk=pk)
+        user: UserApp = request.user
+        qs = Reservation.objects.filter(restaurant=restaurant, user_app=user).order_by('date', 'time')
+        return Response({
+            'status': 'success',
+            'data': AppUserReservationSerializer(qs, many=True).data,
         })
 
 
