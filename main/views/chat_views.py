@@ -1,3 +1,6 @@
+from datetime import timedelta
+
+from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -6,6 +9,26 @@ from rest_framework.permissions import AllowAny
 from main.permissions import IsAppUser, IsManager, IsRestaurantOwner
 from main.models.restaurant import Restaurant
 from main.models.chat_message import ChatMessage
+
+CHAT_RESET_HOURS = 2
+
+
+def _get_or_init_reset(restaurant: Restaurant):
+    """Return (next_reset_at, was_reset). Resets messages if cycle expired."""
+    now = timezone.now()
+    if restaurant.chat_last_reset_at is None:
+        restaurant.chat_last_reset_at = now
+        restaurant.save(update_fields=['chat_last_reset_at'])
+        return now + timedelta(hours=CHAT_RESET_HOURS), False
+
+    next_reset = restaurant.chat_last_reset_at + timedelta(hours=CHAT_RESET_HOURS)
+    if now >= next_reset:
+        ChatMessage.objects.filter(restaurant=restaurant).delete()
+        restaurant.chat_last_reset_at = now
+        restaurant.save(update_fields=['chat_last_reset_at'])
+        return now + timedelta(hours=CHAT_RESET_HOURS), True
+
+    return next_reset, False
 
 
 def _serialize_message(msg):
@@ -24,12 +47,16 @@ class PublicChatListView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, pk):
-        if not Restaurant.objects.filter(pk=pk).exists():
+        try:
+            restaurant = Restaurant.objects.get(pk=pk)
+        except Restaurant.DoesNotExist:
             return Response({'status': 'error', 'message': 'Restaurante não encontrado.'}, status=404)
+
+        next_reset_at, was_reset = _get_or_init_reset(restaurant)
 
         since = request.query_params.get('since')
         qs = ChatMessage.objects.filter(restaurant_id=pk).select_related('user_app', 'restaurant')
-        if since:
+        if since and not was_reset:
             qs = qs.filter(id__gt=since)
         else:
             qs = qs.order_by('-created_at')[:100]
@@ -38,6 +65,8 @@ class PublicChatListView(APIView):
         return Response({
             'status': 'success',
             'status_code': 200,
+            'next_reset_at': next_reset_at.isoformat(),
+            'was_reset': was_reset,
             'data': [_serialize_message(m) for m in qs],
         })
 
@@ -77,15 +106,23 @@ class ManagerChatView(APIView):
         except Restaurant.DoesNotExist:
             return Response({'status': 'error', 'message': 'Restaurante não encontrado.'}, status=404)
 
+        next_reset_at, was_reset = _get_or_init_reset(restaurant)
+
         since = request.query_params.get('since')
         qs = ChatMessage.objects.filter(restaurant=restaurant).select_related('user_app', 'restaurant')
-        if since:
+        if since and not was_reset:
             qs = qs.filter(id__gt=since)
         else:
             qs = qs.order_by('-created_at')[:100]
             qs = list(reversed(list(qs)))
 
-        return Response({'status': 'success', 'status_code': 200, 'data': [_serialize_message(m) for m in qs]})
+        return Response({
+            'status': 'success',
+            'status_code': 200,
+            'next_reset_at': next_reset_at.isoformat(),
+            'was_reset': was_reset,
+            'data': [_serialize_message(m) for m in qs],
+        })
 
     def post(self, request, pk):
         try:

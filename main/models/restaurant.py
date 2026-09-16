@@ -24,6 +24,7 @@ class Restaurant(TimeStampedModel):
     path_logo = models.CharField(max_length=255, null=True, blank=True, verbose_name="Caminho do Logo")
     photo_url = models.URLField(max_length=500, null=True, blank=True, verbose_name="URL da Foto (Cloudinary)")
     description = models.TextField(null=True, blank=True, verbose_name="Descrição")
+    chat_last_reset_at = models.DateTimeField(null=True, blank=True, verbose_name="Último reset do chat")
     latitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True, verbose_name="Latitude")
     longitude = models.DecimalField(max_digits=12, decimal_places=8, null=True, blank=True, verbose_name="Longitude")
     category_items = models.ManyToManyField(
