@@ -15,6 +15,9 @@ class QueueSerializer(serializers.ModelSerializer):
             'status',
             'status_display',
             'current_size',
+            'max_capacity',
+            'current_tables',
+            'max_tables',
             'estimated_wait_minutes',
             'notes',
             'created_at',
@@ -26,4 +29,4 @@ class QueueSerializer(serializers.ModelSerializer):
 class QueueUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Queue
-        fields = ('status', 'current_size', 'estimated_wait_minutes', 'notes')
+        fields = ('status', 'current_size', 'max_capacity', 'current_tables', 'max_tables', 'estimated_wait_minutes', 'notes')

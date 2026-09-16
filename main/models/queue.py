@@ -25,7 +25,10 @@ class Queue(TimeStampedModel):
         default=Status.CLOSED,
         verbose_name="Status da Fila"
     )
-    current_size = models.PositiveIntegerField(default=0, verbose_name="Tamanho Atual da Fila")
+    current_size = models.PositiveIntegerField(default=0, verbose_name="Pessoas na fila")
+    max_capacity = models.PositiveIntegerField(default=0, verbose_name="Capacidade máxima de pessoas")
+    current_tables = models.PositiveIntegerField(default=0, verbose_name="Mesas ocupadas")
+    max_tables = models.PositiveIntegerField(default=0, verbose_name="Total de mesas")
     estimated_wait_minutes = models.PositiveIntegerField(
         default=0,
         verbose_name="Tempo de Espera Estimado (minutos)"
