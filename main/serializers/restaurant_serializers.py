@@ -144,6 +144,7 @@ class RestaurantPublicResponseSerializer(serializers.ModelSerializer):
     category_items = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     average_rating = serializers.SerializerMethodField()
     review_count = serializers.SerializerMethodField()
+    queue = serializers.SerializerMethodField()
 
     class Meta:
         model = Restaurant
@@ -162,6 +163,7 @@ class RestaurantPublicResponseSerializer(serializers.ModelSerializer):
             'category_items',
             'average_rating',
             'review_count',
+            'queue',
         )
         read_only_fields = fields
 
@@ -173,3 +175,18 @@ class RestaurantPublicResponseSerializer(serializers.ModelSerializer):
 
     def get_review_count(self, obj):
         return obj.reviews.count()
+
+    def get_queue(self, obj):
+        try:
+            q = obj.queue
+            return {
+                'status': q.status,
+                'status_display': q.get_status_display(),
+                'current_size': q.current_size,
+                'max_capacity': q.max_capacity,
+                'current_tables': q.current_tables,
+                'max_tables': q.max_tables,
+                'estimated_wait_minutes': q.estimated_wait_minutes,
+            }
+        except Exception:
+            return None
