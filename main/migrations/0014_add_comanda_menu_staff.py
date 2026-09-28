@@ -51,11 +51,7 @@ class Migration(migrations.Migration):
                     to='main.restaurant',
                 )),
             ],
-            options={'db_table': 'restaurant_table', 'ordering': ['identifier']},
-        ),
-        migrations.AddConstraint(
-            model_name='restauranttable',
-            constraint=models.UniqueConstraint(fields=['restaurant', 'identifier'], name='unique_restaurant_table'),
+            options={'db_table': 'restaurant_table', 'ordering': ['identifier'], 'unique_together': {('restaurant', 'identifier')}},
         ),
 
         # ── Comanda ───────────────────────────────────────────────────────────
