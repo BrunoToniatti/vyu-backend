@@ -1,5 +1,6 @@
 from django.urls import path, include
 from main.views.category_views import UserPreferencesView, RestaurantCategoryItemsView
+from main.urls.comanda_urls import waiter_patterns
 
 urlpatterns = [
     # AUTH
@@ -31,4 +32,7 @@ urlpatterns = [
 
     # RESTAURANT CATEGORIES
     path('restaurants/<int:restaurant_pk>/categories/', RestaurantCategoryItemsView.as_view()),
+
+    # WAITER (public token-based access)
+    path('waiter/', include(waiter_patterns)),
 ]

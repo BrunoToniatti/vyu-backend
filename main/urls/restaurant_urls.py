@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, include
+from main.urls.comanda_urls import restaurant_patterns
 from main.views.restaurant_views import (
     ManagerRestaurantListCreateView,
     ManagerRestaurantDetailView,
@@ -41,4 +42,6 @@ urlpatterns = [
     path('public/<int:pk>/reservations/', PublicReservationCreateView.as_view(), name='restaurant-public-reservations'),
     path('<int:pk>/reservations/', ManagerReservationListCreateView.as_view(), name='restaurant-reservations'),
     path('<int:pk>/reservations/<int:res_pk>/', ManagerReservationDetailView.as_view(), name='restaurant-reservation-detail'),
+    # Comanda routes
+    path('<int:pk>/', include(restaurant_patterns)),
 ]

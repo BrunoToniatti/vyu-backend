@@ -8,6 +8,7 @@ from main.models.bug_report import BugReport
 from main.models.review import Review
 from main.models.chat_message import ChatMessage
 from main.models.reservation import Reservation
+from main.models.comanda import MenuItem, RestaurantTable, Comanda, ComandaItem, StaffToken
 
 __all__ = [
     'TimeStampedModel',
@@ -21,4 +22,9 @@ __all__ = [
     'Review',
     'ChatMessage',
     'Reservation',
+    'MenuItem',
+    'RestaurantTable',
+    'Comanda',
+    'ComandaItem',
+    'StaffToken',
 ]
