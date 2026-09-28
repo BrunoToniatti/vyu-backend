@@ -19,7 +19,7 @@ from main.views.reservation_views import (
     PublicReservationCreateView,
 )
 from main.views.comanda_views import (
-    MenuItemListCreateView, MenuItemDetailView,
+    MenuItemListCreateView, MenuItemDetailView, MenuItemPhotoUploadView,
     TableListCreateView, TableDetailView,
     ComandaListCreateView, ComandaDetailView,
     ComandaItemListCreateView, ComandaItemDeleteView,
@@ -51,6 +51,7 @@ urlpatterns = [
     # Menu routes
     path('<int:pk>/menu/', MenuItemListCreateView.as_view(), name='restaurant-menu-list'),
     path('<int:pk>/menu/<int:item_pk>/', MenuItemDetailView.as_view(), name='restaurant-menu-detail'),
+    path('<int:pk>/menu/<int:item_pk>/photo/', MenuItemPhotoUploadView.as_view(), name='restaurant-menu-photo'),
     # Table routes
     path('<int:pk>/tables/', TableListCreateView.as_view(), name='restaurant-tables-list'),
     path('<int:pk>/tables/<int:table_pk>/', TableDetailView.as_view(), name='restaurant-tables-detail'),

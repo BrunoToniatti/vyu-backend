@@ -14,6 +14,11 @@ class MenuItemSerializer(serializers.ModelSerializer):
 
 
 class MenuItemCreateSerializer(serializers.ModelSerializer):
+    description = serializers.CharField(required=False, allow_blank=True, default='')
+    image_url   = serializers.CharField(required=False, allow_blank=True, default='')
+    subcategory = serializers.CharField(required=False, allow_blank=True, default='')
+    available   = serializers.BooleanField(required=False, default=True)
+
     class Meta:
         model = MenuItem
         fields = ['name', 'description', 'price', 'image_url', 'category', 'subcategory', 'available']

@@ -80,6 +80,29 @@ class MenuItemDetailView(APIView):
         return Response({'status': 'success'}, status=status.HTTP_204_NO_CONTENT)
 
 
+class MenuItemPhotoUploadView(APIView):
+    """POST /restaurants/<pk>/menu/<item_pk>/photo/"""
+    permission_classes = [IsManager]
+
+    def post(self, request, pk, item_pk):
+        import base64, uuid as _uuid
+        r = _owned_restaurant(request, pk)
+        item = get_object_or_404(MenuItem, pk=item_pk, restaurant=r)
+        file = request.FILES.get('image')
+        if not file:
+            return Response({'status': 'error', 'errors': 'Nenhum arquivo enviado.'}, status=400)
+        ext = file.name.rsplit('.', 1)[-1].lower() if '.' in file.name else 'jpg'
+        allowed = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
+        if ext not in allowed:
+            return Response({'status': 'error', 'errors': 'Formato inválido.'}, status=400)
+        content = file.read()
+        b64 = base64.b64encode(content).decode()
+        data_url = f"data:{file.content_type};base64,{b64}"
+        item.image_url = data_url
+        item.save(update_fields=['image_url'])
+        return Response({'status': 'success', 'data': MenuItemSerializer(item).data})
+
+
 # ── TABLES ────────────────────────────────────────────────────────────────────
 
 class TableListCreateView(APIView):
