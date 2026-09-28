@@ -1,5 +1,4 @@
 from django.urls import path, include
-from main.urls.comanda_urls import restaurant_patterns
 from main.views.restaurant_views import (
     ManagerRestaurantListCreateView,
     ManagerRestaurantDetailView,
@@ -18,6 +17,13 @@ from main.views.reservation_views import (
     ManagerReservationListCreateView,
     ManagerReservationDetailView,
     PublicReservationCreateView,
+)
+from main.views.comanda_views import (
+    MenuItemListCreateView, MenuItemDetailView,
+    TableListCreateView, TableDetailView,
+    ComandaListCreateView, ComandaDetailView,
+    ComandaItemListCreateView, ComandaItemDeleteView,
+    StaffTokenListCreateView, StaffTokenDetailView,
 )
 
 urlpatterns = [
@@ -42,6 +48,18 @@ urlpatterns = [
     path('public/<int:pk>/reservations/', PublicReservationCreateView.as_view(), name='restaurant-public-reservations'),
     path('<int:pk>/reservations/', ManagerReservationListCreateView.as_view(), name='restaurant-reservations'),
     path('<int:pk>/reservations/<int:res_pk>/', ManagerReservationDetailView.as_view(), name='restaurant-reservation-detail'),
+    # Menu routes
+    path('<int:pk>/menu/', MenuItemListCreateView.as_view(), name='restaurant-menu-list'),
+    path('<int:pk>/menu/<int:item_pk>/', MenuItemDetailView.as_view(), name='restaurant-menu-detail'),
+    # Table routes
+    path('<int:pk>/tables/', TableListCreateView.as_view(), name='restaurant-tables-list'),
+    path('<int:pk>/tables/<int:table_pk>/', TableDetailView.as_view(), name='restaurant-tables-detail'),
     # Comanda routes
-    path('<int:pk>/', include(restaurant_patterns)),
+    path('<int:pk>/comandas/', ComandaListCreateView.as_view(), name='restaurant-comandas-list'),
+    path('<int:pk>/comandas/<int:comanda_pk>/', ComandaDetailView.as_view(), name='restaurant-comandas-detail'),
+    path('<int:pk>/comandas/<int:comanda_pk>/items/', ComandaItemListCreateView.as_view(), name='restaurant-comanda-items'),
+    path('<int:pk>/comandas/<int:comanda_pk>/items/<int:item_pk>/', ComandaItemDeleteView.as_view(), name='restaurant-comanda-item-delete'),
+    # Staff token routes
+    path('<int:pk>/staff-tokens/', StaffTokenListCreateView.as_view(), name='restaurant-staff-tokens'),
+    path('<int:pk>/staff-tokens/<int:tok_pk>/', StaffTokenDetailView.as_view(), name='restaurant-staff-token-detail'),
 ]
