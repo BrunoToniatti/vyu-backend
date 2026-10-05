@@ -53,6 +53,19 @@ class IsAdmin(BasePermission):
         )
 
 
+class IsProPlan(BasePermission):
+    """
+    Allows access only to Managers with plan=PRO (or admins).
+    Used to gate comanda features behind the Pro plan.
+    """
+    def has_permission(self, request, view):
+        if not (request.user and request.user.is_authenticated and isinstance(request.user, UserManager)):
+            return False
+        if getattr(request.user, 'is_admin', False):
+            return True
+        return getattr(request.user, 'plan', 'BASIC') == 'PRO'
+
+
 class IsRestaurantOwner(BasePermission):
     """
     Object-level permission to only allow the owning Manager to view, edit, or delete a restaurant.

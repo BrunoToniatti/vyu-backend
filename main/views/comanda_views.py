@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 
-from main.permissions import IsManager
+from main.permissions import IsManager, IsProPlan
 from main.models.restaurant import Restaurant
 from main.models.comanda import MenuItem, RestaurantTable, Comanda, ComandaItem, StaffToken
 from main.serializers.comanda_serializers import (
@@ -30,7 +30,7 @@ def _waiter_restaurant(token_str):
 
 class MenuItemListCreateView(APIView):
     """GET/POST /restaurants/<pk>/menu/"""
-    permission_classes = [IsManager]
+    permission_classes = [IsProPlan]
 
     def get(self, request, pk):
         r = _owned_restaurant(request, pk)
@@ -50,7 +50,7 @@ class MenuItemListCreateView(APIView):
 
 class MenuItemDetailView(APIView):
     """GET/PUT/PATCH/DELETE /restaurants/<pk>/menu/<item_pk>/"""
-    permission_classes = [IsManager]
+    permission_classes = [IsProPlan]
 
     def _get(self, request, pk, item_pk):
         r = _owned_restaurant(request, pk)
@@ -82,7 +82,7 @@ class MenuItemDetailView(APIView):
 
 class MenuItemPhotoUploadView(APIView):
     """POST /restaurants/<pk>/menu/<item_pk>/photo/"""
-    permission_classes = [IsManager]
+    permission_classes = [IsProPlan]
 
     def post(self, request, pk, item_pk):
         import base64, uuid as _uuid
@@ -107,7 +107,7 @@ class MenuItemPhotoUploadView(APIView):
 
 class TableListCreateView(APIView):
     """GET/POST /restaurants/<pk>/tables/"""
-    permission_classes = [IsManager]
+    permission_classes = [IsProPlan]
 
     def get(self, request, pk):
         r = _owned_restaurant(request, pk)
@@ -127,7 +127,7 @@ class TableListCreateView(APIView):
 
 class TableDetailView(APIView):
     """DELETE /restaurants/<pk>/tables/<table_pk>/"""
-    permission_classes = [IsManager]
+    permission_classes = [IsProPlan]
 
     def delete(self, request, pk, table_pk):
         r = _owned_restaurant(request, pk)
@@ -140,7 +140,7 @@ class TableDetailView(APIView):
 
 class ComandaListCreateView(APIView):
     """GET/POST /restaurants/<pk>/comandas/"""
-    permission_classes = [IsManager]
+    permission_classes = [IsProPlan]
 
     def get(self, request, pk):
         r = _owned_restaurant(request, pk)
@@ -170,7 +170,7 @@ class ComandaListCreateView(APIView):
 
 class ComandaDetailView(APIView):
     """GET/PATCH /restaurants/<pk>/comandas/<comanda_pk>/"""
-    permission_classes = [IsManager]
+    permission_classes = [IsProPlan]
 
     def _get(self, request, pk, comanda_pk):
         r = _owned_restaurant(request, pk)
@@ -196,7 +196,7 @@ class ComandaDetailView(APIView):
 
 class ComandaItemListCreateView(APIView):
     """POST /restaurants/<pk>/comandas/<comanda_pk>/items/"""
-    permission_classes = [IsManager]
+    permission_classes = [IsProPlan]
 
     def post(self, request, pk, comanda_pk):
         r = _owned_restaurant(request, pk)
@@ -222,7 +222,7 @@ class ComandaItemListCreateView(APIView):
 
 class ComandaItemDeleteView(APIView):
     """DELETE /restaurants/<pk>/comandas/<comanda_pk>/items/<item_pk>/"""
-    permission_classes = [IsManager]
+    permission_classes = [IsProPlan]
 
     def delete(self, request, pk, comanda_pk, item_pk):
         r = _owned_restaurant(request, pk)
@@ -236,7 +236,7 @@ class ComandaItemDeleteView(APIView):
 
 class StaffTokenListCreateView(APIView):
     """GET/POST /restaurants/<pk>/staff-tokens/"""
-    permission_classes = [IsManager]
+    permission_classes = [IsProPlan]
 
     def get(self, request, pk):
         r = _owned_restaurant(request, pk)
@@ -253,7 +253,7 @@ class StaffTokenListCreateView(APIView):
 
 class StaffTokenDetailView(APIView):
     """PATCH/DELETE /restaurants/<pk>/staff-tokens/<tok_pk>/"""
-    permission_classes = [IsManager]
+    permission_classes = [IsProPlan]
 
     def patch(self, request, pk, tok_pk):
         r = _owned_restaurant(request, pk)

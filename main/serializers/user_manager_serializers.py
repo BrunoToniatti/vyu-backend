@@ -72,6 +72,7 @@ class UserManagerResponseSerializer(serializers.ModelSerializer):
             'email',
             'username',
             'is_admin',
+            'plan',
             'restaurant_count',
             'last_login',
             'created_at',
@@ -129,4 +130,4 @@ class AdminUserManagerCreateSerializer(serializers.ModelSerializer):
 class AdminUserManagerUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserManager
-        fields = ('first_name', 'last_name', 'phone_number', 'is_admin', 'is_active')
+        fields = ('first_name', 'last_name', 'phone_number', 'is_admin', 'is_active', 'plan')

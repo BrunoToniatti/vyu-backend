@@ -16,8 +16,13 @@ class UserManager(TimeStampedModel):
     last_login = models.DateTimeField(null=True, blank=True, verbose_name="Último Login")
     email = models.EmailField(unique=True, max_length=255, db_index=True, verbose_name="E-mail")
     username = models.CharField(unique=True, max_length=100, db_index=True, verbose_name="Nome de Usuário")
+    PLAN_BASIC = 'BASIC'
+    PLAN_PRO   = 'PRO'
+    PLAN_CHOICES = [(PLAN_BASIC, 'Basic'), (PLAN_PRO, 'Pro')]
+
     is_active = models.BooleanField(default=True, verbose_name="Ativo")
-    is_admin = models.BooleanField(default=False, verbose_name="Administrador")
+    is_admin  = models.BooleanField(default=False, verbose_name="Administrador")
+    plan      = models.CharField(max_length=10, choices=PLAN_CHOICES, default=PLAN_BASIC, verbose_name="Plano")
 
     class Meta:
         db_table = 'user_manager'
