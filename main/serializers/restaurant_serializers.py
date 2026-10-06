@@ -183,7 +183,7 @@ class RestaurantPublicResponseSerializer(serializers.ModelSerializer):
             q = obj.queue
             live = getattr(obj, 'live_data_capture', False)
             if live:
-                max_tables = obj.restaurant_tables.count()
+                max_tables = obj.tables.count()
                 current_tables = obj.comandas.filter(status='OPEN').count()
                 occupancy_pct = round((current_tables / max_tables) * 100, 1) if max_tables > 0 else 0.0
             else:

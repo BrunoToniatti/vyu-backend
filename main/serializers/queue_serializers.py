@@ -38,7 +38,7 @@ class QueueSerializer(serializers.ModelSerializer):
 
     def get_max_tables(self, obj):
         if self._live(obj):
-            return obj.restaurant.restaurant_tables.count()
+            return obj.restaurant.tables.count()
         return obj.max_tables
 
     def get_current_tables(self, obj):
