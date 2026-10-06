@@ -27,6 +27,10 @@ class Restaurant(TimeStampedModel):
     chat_last_reset_at = models.DateTimeField(null=True, blank=True, verbose_name="Último reset do chat")
     latitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True, verbose_name="Latitude")
     longitude = models.DecimalField(max_digits=12, decimal_places=8, null=True, blank=True, verbose_name="Longitude")
+    live_data_capture = models.BooleanField(
+        default=False,
+        verbose_name="Captura de dados ao vivo (via Comandas)"
+    )
     category_items = models.ManyToManyField(
         CategoryItem,
         blank=True,

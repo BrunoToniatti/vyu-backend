@@ -71,6 +71,7 @@ class RestaurantUpdateSerializer(serializers.ModelSerializer):
             'instagram',
             'path_logo',
             'photo_url',
+            'live_data_capture',
         )
 
     def validate_name(self, value):
@@ -123,6 +124,7 @@ class RestaurantAdminResponseSerializer(serializers.ModelSerializer):
             'instagram',
             'path_logo',
             'photo_url',
+            'live_data_capture',
             'created_at',
             'updated_at',
         )
@@ -179,14 +181,25 @@ class RestaurantPublicResponseSerializer(serializers.ModelSerializer):
     def get_queue(self, obj):
         try:
             q = obj.queue
+            live = getattr(obj, 'live_data_capture', False)
+            if live:
+                max_tables = obj.restaurant_tables.count()
+                current_tables = obj.comandas.filter(status='OPEN').count()
+                occupancy_pct = round((current_tables / max_tables) * 100, 1) if max_tables > 0 else 0.0
+            else:
+                max_tables = q.max_tables
+                current_tables = q.current_tables
+                occupancy_pct = round((current_tables / max_tables) * 100, 1) if max_tables > 0 else 0.0
             return {
                 'status': q.status,
                 'status_display': q.get_status_display(),
                 'current_size': q.current_size,
                 'max_capacity': q.max_capacity,
-                'current_tables': q.current_tables,
-                'max_tables': q.max_tables,
+                'current_tables': current_tables,
+                'max_tables': max_tables,
+                'occupancy_pct': occupancy_pct,
                 'estimated_wait_minutes': q.estimated_wait_minutes,
+                'live_data_capture': live,
             }
         except Exception:
             return None
