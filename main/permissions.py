@@ -3,6 +3,17 @@ from main.models.user_manager import UserManager
 from main.models.user_app import UserApp
 
 
+def owner_filter(user):
+    """Queryset kwargs scoping restaurants to the user; admins can reach every restaurant."""
+    if getattr(user, 'is_admin', False):
+        return {}
+    return {'manager': user}
+
+
+def can_manage_restaurant(user, restaurant):
+    return bool(getattr(user, 'is_admin', False) or restaurant.manager_id == user.id)
+
+
 class IsAuthenticatedUser(BasePermission):
     """
     Allows access only to authenticated users (either UserManager or UserApp).
@@ -91,4 +102,4 @@ class IsRestaurantOwner(BasePermission):
         ):
             return False
 
-        return obj.manager_id == request.user.id
+        return can_manage_restaurant(request.user, obj)

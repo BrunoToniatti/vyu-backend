@@ -4,7 +4,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
-from main.permissions import IsManager, IsRestaurantOwner, IsAppUser
+from main.permissions import IsManager, IsRestaurantOwner, IsAppUser, owner_filter
 from main.models.restaurant import Restaurant
 from main.models.reservation import Reservation
 from main.models.user_app import UserApp
@@ -146,7 +146,7 @@ class ManagerReservationListCreateView(APIView):
     permission_classes = [IsManager, IsRestaurantOwner]
 
     def get(self, request, pk):
-        restaurant = get_object_or_404(Restaurant, pk=pk, manager=request.user)
+        restaurant = get_object_or_404(Restaurant, pk=pk, **owner_filter(request.user))
         date_filter = request.query_params.get('date')
         status_filter = request.query_params.get('status')
 
@@ -160,7 +160,7 @@ class ManagerReservationListCreateView(APIView):
         return Response({'status': 'success', 'status_code': 200, 'count': qs.count(), 'data': serializer.data})
 
     def post(self, request, pk):
-        restaurant = get_object_or_404(Restaurant, pk=pk, manager=request.user)
+        restaurant = get_object_or_404(Restaurant, pk=pk, **owner_filter(request.user))
         serializer = ReservationCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -187,7 +187,7 @@ class ManagerReservationDetailView(APIView):
     permission_classes = [IsManager, IsRestaurantOwner]
 
     def patch(self, request, pk, res_pk):
-        restaurant = get_object_or_404(Restaurant, pk=pk, manager=request.user)
+        restaurant = get_object_or_404(Restaurant, pk=pk, **owner_filter(request.user))
         reservation = get_object_or_404(Reservation, pk=res_pk, restaurant=restaurant)
         serializer = ReservationStatusSerializer(reservation, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -195,7 +195,7 @@ class ManagerReservationDetailView(APIView):
         return Response({'status': 'success', 'data': ReservationSerializer(reservation).data})
 
     def delete(self, request, pk, res_pk):
-        restaurant = get_object_or_404(Restaurant, pk=pk, manager=request.user)
+        restaurant = get_object_or_404(Restaurant, pk=pk, **owner_filter(request.user))
         reservation = get_object_or_404(Reservation, pk=res_pk, restaurant=restaurant)
         reservation.delete()
         return Response({'status': 'success', 'message': 'Reserva removida.'}, status=status.HTTP_204_NO_CONTENT)

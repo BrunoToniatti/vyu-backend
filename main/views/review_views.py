@@ -6,7 +6,7 @@ from rest_framework.exceptions import NotFound, PermissionDenied, ValidationErro
 
 from main.models.restaurant import Restaurant
 from main.models.review import Review
-from main.permissions import IsAppUser, IsManager, IsRestaurantOwner
+from main.permissions import IsAppUser, IsManager, IsRestaurantOwner, owner_filter, can_manage_restaurant
 from main.serializers.review_serializers import (
     ReviewCreateSerializer,
     ReviewResponseSerializer,
@@ -59,7 +59,7 @@ class ManagerReviewResponseView(APIView):
 
     def post(self, request, restaurant_pk, review_pk):
         restaurant = get_restaurant_or_404(restaurant_pk)
-        if restaurant.manager_id != request.user.id:
+        if not can_manage_restaurant(request.user, restaurant):
             raise PermissionDenied("Você não é o gerente deste restaurante.")
 
         try:

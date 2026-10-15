@@ -55,7 +55,7 @@ class RestaurantService:
             raise NotFound("Restaurante não encontrado.")
 
         # Strict IDOR / BOLA check
-        if restaurant.manager_id != manager.id:
+        if not (manager.is_admin or restaurant.manager_id == manager.id):
             raise PermissionDenied("Você não tem permissão para acessar os dados deste restaurante.")
 
         return restaurant
@@ -66,7 +66,7 @@ class RestaurantService:
         """
         Updates an existing restaurant, verifying manager ownership.
         """
-        if not isinstance(manager, UserManager) or restaurant.manager_id != manager.id:
+        if not isinstance(manager, UserManager) or not (manager.is_admin or restaurant.manager_id == manager.id):
             raise PermissionDenied("Você não tem permissão para alterar este restaurante.")
 
         # Prevent modification of manager_id or id
@@ -86,7 +86,7 @@ class RestaurantService:
         """
         Deletes a restaurant, verifying manager ownership.
         """
-        if not isinstance(manager, UserManager) or restaurant.manager_id != manager.id:
+        if not isinstance(manager, UserManager) or not (manager.is_admin or restaurant.manager_id == manager.id):
             raise PermissionDenied("Você não tem permissão para excluir este restaurante.")
 
         restaurant.delete()

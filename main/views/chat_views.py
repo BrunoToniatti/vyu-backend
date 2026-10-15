@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 
-from main.permissions import IsAppUser, IsManager, IsRestaurantOwner
+from main.permissions import IsAppUser, IsManager, IsRestaurantOwner, owner_filter
 from main.models.restaurant import Restaurant
 from main.models.chat_message import ChatMessage
 
@@ -102,7 +102,7 @@ class ManagerChatView(APIView):
 
     def get(self, request, pk):
         try:
-            restaurant = Restaurant.objects.get(pk=pk, manager=request.user)
+            restaurant = Restaurant.objects.get(pk=pk, **owner_filter(request.user))
         except Restaurant.DoesNotExist:
             return Response({'status': 'error', 'message': 'Restaurante não encontrado.'}, status=404)
 
@@ -126,7 +126,7 @@ class ManagerChatView(APIView):
 
     def post(self, request, pk):
         try:
-            restaurant = Restaurant.objects.get(pk=pk, manager=request.user)
+            restaurant = Restaurant.objects.get(pk=pk, **owner_filter(request.user))
         except Restaurant.DoesNotExist:
             return Response({'status': 'error', 'message': 'Restaurante não encontrado.'}, status=404)
 
@@ -150,7 +150,7 @@ class ManagerChatView(APIView):
         if not msg_id:
             return Response({'status': 'error', 'message': 'msg_id obrigatório.'}, status=400)
         try:
-            restaurant = Restaurant.objects.get(pk=pk, manager=request.user)
+            restaurant = Restaurant.objects.get(pk=pk, **owner_filter(request.user))
             msg = ChatMessage.objects.get(pk=msg_id, restaurant=restaurant)
         except (Restaurant.DoesNotExist, ChatMessage.DoesNotExist):
             return Response({'status': 'error', 'message': 'Mensagem não encontrada.'}, status=404)

@@ -7,7 +7,7 @@ from main.serializers.category_serializers import (
     CategoryItemSerializer, CategoryItemCreateSerializer,
     UserPreferencesSerializer, RestaurantCategoryItemsSerializer,
 )
-from main.permissions import IsAdmin, IsManager, IsAppUser
+from main.permissions import IsAdmin, IsManager, IsAppUser, owner_filter
 
 
 # ── Admin: CRUD Categorias ──────────────────────────────────────────────────
@@ -147,7 +147,7 @@ class RestaurantCategoryItemsView(APIView):
 
     def get(self, request, restaurant_pk):
         try:
-            restaurant = Restaurant.objects.get(pk=restaurant_pk, manager=request.user)
+            restaurant = Restaurant.objects.get(pk=restaurant_pk, **owner_filter(request.user))
         except Restaurant.DoesNotExist:
             return Response({'status': 'error', 'message': 'Restaurante não encontrado'}, status=404)
         items = restaurant.category_items.select_related('category').filter(is_active=True)
@@ -155,7 +155,7 @@ class RestaurantCategoryItemsView(APIView):
 
     def put(self, request, restaurant_pk):
         try:
-            restaurant = Restaurant.objects.get(pk=restaurant_pk, manager=request.user)
+            restaurant = Restaurant.objects.get(pk=restaurant_pk, **owner_filter(request.user))
         except Restaurant.DoesNotExist:
             return Response({'status': 'error', 'message': 'Restaurante não encontrado'}, status=404)
         serializer = RestaurantCategoryItemsSerializer(data=request.data)

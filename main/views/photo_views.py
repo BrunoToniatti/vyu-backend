@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from main.permissions import IsManager, IsRestaurantOwner, IsAppUser
+from main.permissions import IsManager, IsRestaurantOwner, IsAppUser, owner_filter
 from main.models.restaurant import Restaurant
 from main.serializers.restaurant_serializers import RestaurantAdminResponseSerializer
 from main.serializers.user_app_serializers import UserAppResponseSerializer
@@ -25,7 +25,7 @@ class RestaurantPhotoUploadView(APIView):
 
     def post(self, request, pk):
         try:
-            restaurant = Restaurant.objects.get(pk=pk, manager=request.user)
+            restaurant = Restaurant.objects.get(pk=pk, **owner_filter(request.user))
         except Restaurant.DoesNotExist:
             return Response(
                 {'status': 'error', 'message': 'Restaurante não encontrado.'},
@@ -78,7 +78,7 @@ class RestaurantPhotoUploadView(APIView):
 
     def delete(self, request, pk):
         try:
-            restaurant = Restaurant.objects.get(pk=pk, manager=request.user)
+            restaurant = Restaurant.objects.get(pk=pk, **owner_filter(request.user))
         except Restaurant.DoesNotExist:
             return Response(
                 {'status': 'error', 'message': 'Restaurante não encontrado.'},

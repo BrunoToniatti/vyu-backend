@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 
-from main.permissions import IsManager, IsProPlan
+from main.permissions import IsManager, IsProPlan, owner_filter
 from main.models.restaurant import Restaurant
 from main.models.comanda import MenuItem, RestaurantTable, Comanda, ComandaItem, StaffToken
 from main.serializers.comanda_serializers import (
@@ -18,7 +18,7 @@ from main.serializers.comanda_serializers import (
 
 
 def _owned_restaurant(request, pk):
-    return get_object_or_404(Restaurant, pk=pk, manager=request.user)
+    return get_object_or_404(Restaurant, pk=pk, **owner_filter(request.user))
 
 
 def _waiter_restaurant(token_str):
