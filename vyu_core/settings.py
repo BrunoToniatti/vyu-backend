@@ -193,10 +193,13 @@ SIMPLE_JWT = {
 
 # CORS Configuration (Strict Whitelist Only)
 CORS_ALLOW_ALL_ORIGINS = False
-_cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:4200,http://127.0.0.1:3000,http://127.0.0.1:4200,https://vyu-web.netlify.app')
+_cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:4200,http://127.0.0.1:3000,http://127.0.0.1:4200')
 CORS_ALLOWED_ORIGINS = [
-    origin.strip()
+    origin.strip().rstrip('/')
     for origin in _cors_origins.split(',')
     if origin.strip()
 ]
+# Production frontend is always allowed, even if the env var omits it.
+if 'https://vyu-web.netlify.app' not in CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS.append('https://vyu-web.netlify.app')
 CORS_ALLOW_CREDENTIALS = True
