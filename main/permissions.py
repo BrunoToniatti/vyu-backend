@@ -33,7 +33,7 @@ class IsManager(BasePermission):
             request.user and
             request.user.is_authenticated and
             isinstance(request.user, UserManager) and
-            getattr(request.user, 'user_type', None) == 'MANAGER'
+            getattr(request.user, 'user_type', None) in ('MANAGER', 'ADMIN')
         )
 
 
@@ -89,7 +89,7 @@ class IsRestaurantOwner(BasePermission):
             request.user and
             request.user.is_authenticated and
             isinstance(request.user, UserManager) and
-            getattr(request.user, 'user_type', None) == 'MANAGER'
+            getattr(request.user, 'user_type', None) in ('MANAGER', 'ADMIN')
         )
 
     def has_object_permission(self, request, view, obj):
@@ -98,7 +98,7 @@ class IsRestaurantOwner(BasePermission):
             request.user and
             request.user.is_authenticated and
             isinstance(request.user, UserManager) and
-            getattr(request.user, 'user_type', None) == 'MANAGER'
+            getattr(request.user, 'user_type', None) in ('MANAGER', 'ADMIN')
         ):
             return False
 
